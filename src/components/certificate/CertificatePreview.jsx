@@ -2,11 +2,20 @@ import React from 'react';
 import { format } from 'date-fns';
 import { Laptop } from 'lucide-react';
 
-export default function CertificatePreview({ certificate, stepResults = [] }) {
+export default function CertificatePreview({ certificate, stepResults = [], steps = [] }) {
   if (!certificate) return null;
   
-  // Filter step results that have notes
-  const stepNotesWithContent = stepResults.filter(r => r.notes && r.notes.trim());
+  // Filter step results that have notes and enrich with step titles
+  const stepNotesWithContent = stepResults
+    .filter((r) => r.notes && r.notes.trim())
+    .map((result) => {
+      const matchingStep = steps.find((s) => s.step_number === result.step_number);
+      return {
+        ...result,
+        step_title: matchingStep?.step_title,
+      };
+    })
+    .sort((a, b) => (a.step_number || 0) - (b.step_number || 0));
 
   const getOSDisplay = () => {
     if (certificate.operating_system === 'Windows') {
@@ -149,10 +158,14 @@ export default function CertificatePreview({ certificate, stepResults = [] }) {
       {stepNotesWithContent.length > 0 && (
         <div className="mb-6 print:mb-2">
           <h2 className="font-semibold text-slate-900 mb-2 print:mb-1">Refurbishment Process Notes</h2>
-          <div className="text-sm text-slate-900 space-y-1 print:space-y-0.5 print:text-xs">
+          <div className="text-sm text-slate-900 space-y-2 print:space-y-1 print:text-xs">
             {stepNotesWithContent.map((result) => (
-              <div key={result.id}>
-                <span className="font-medium">Step {result.step_number}:</span> {result.notes}
+              <div key={result.id || result.step_number}>
+                <div className="font-medium text-slate-800">
+                  Step {result.step_number}
+                  {result.step_title ? `: ${result.step_title}` : ''}
+                </div>
+                <div className="whitespace-pre-wrap">{result.notes}</div>
               </div>
             ))}
           </div>

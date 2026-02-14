@@ -24,6 +24,7 @@ export default function CertificatePreviewPage() {
   const [loading, setLoading] = useState(true);
   const [certificate, setCertificate] = useState(null);
   const [stepResults, setStepResults] = useState([]);
+  const [templateSteps, setTemplateSteps] = useState([]);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deletePassword, setDeletePassword] = useState('');
   const [deleteError, setDeleteError] = useState('');
@@ -60,6 +61,13 @@ export default function CertificatePreviewPage() {
     const processRuns = await base44.entities.RefurbProcessRun.filter({ certificate_id: certId });
     if (processRuns.length > 0) {
       const runId = processRuns[0].id;
+      const templateId = processRuns[0].template_id;
+
+      if (templateId) {
+        const templates = await base44.entities.RefurbProcessTemplate.filter({ id: templateId });
+        setTemplateSteps(templates[0]?.ordered_steps || []);
+      }
+
       const results = await base44.entities.RefurbStepResult.filter({ process_run_id: runId });
       setStepResults(results);
     }
@@ -150,7 +158,11 @@ export default function CertificatePreviewPage() {
       {/* Certificate Preview */}
       <div className="max-w-3xl mx-auto py-8 px-4 print:p-0 print:max-w-none">
         <div className="bg-white rounded-2xl shadow-lg print:shadow-none print:rounded-none">
-          <CertificatePreviewComponent certificate={certificate} stepResults={stepResults} />
+          <CertificatePreviewComponent
+            certificate={certificate}
+            stepResults={stepResults}
+            steps={templateSteps}
+          />
         </div>
       </div>
 
