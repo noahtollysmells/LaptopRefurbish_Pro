@@ -23,7 +23,7 @@ export const SHEETS_CONFIG = {
   apiKey: 'AIzaSyC3IK3Rtik4a2O6mVJq6soDdIN-VVex6T4',
   
   // Google Apps Script web app URL (for writes)
-  webAppUrl: 'https://script.google.com/macros/s/AKfycbx4jv40-MCr-4QFjvNKI5hFa8VcXDmq_C3f7it8SeFPtxm4OrA8PtzPuWTtKy-4sAhGsw/exec',
+  webAppUrl: 'https://script.google.com/macros/s/AKfycbyKRn0TcBS3miuNBGQUAaZBKDEsyxq-8MpjDacNNcva2Y4RuwX9xABGWhF9VU0yw2savw/exec',
   
   // Set to true once you've configured the above
   configured: true,
