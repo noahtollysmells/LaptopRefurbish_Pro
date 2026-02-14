@@ -76,10 +76,16 @@ export default function CertificateForm({ data, onChange }) {
             <Label htmlFor="technician_name">Technician Name *</Label>
             <Input
               id="technician_name"
+              list="technician-name-options"
               value={data.technician_name || ''}
               onChange={(e) => handleChange('technician_name', e.target.value)}
               placeholder="Enter technician name"
             />
+            <datalist id="technician-name-options">
+              <option value="Noah Tolly" />
+              <option value="Cassie Spry" />
+              <option value="Mike Thomas" />
+            </datalist>
           </div>
         </div>
       </section>

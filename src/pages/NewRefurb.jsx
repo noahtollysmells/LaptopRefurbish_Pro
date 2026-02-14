@@ -156,11 +156,17 @@ export default function NewRefurb() {
                 <Label htmlFor="technician_name">Technician Name *</Label>
                 <Input
                   id="technician_name"
+                  list="technician-name-options"
                   value={formData.technician_name}
                   onChange={(e) => handleChange('technician_name', e.target.value)}
                   placeholder="Enter your name"
                   className="h-12 mt-1"
                 />
+                <datalist id="technician-name-options">
+                  <option value="Noah Tolly" />
+                  <option value="Cassie Spry" />
+                  <option value="Mike Thomas" />
+                </datalist>
               </div>
 
               <div>
