@@ -26,8 +26,6 @@ const SOFTWARE_WORK = [
   'Bloatware removed'
 ];
 
-const TECHNICIANS = ['Mike Thomas', 'Cassie Spry', 'Noah Tolly'];
-
 export default function CertificateForm({ data, onChange }) {
   const handleChange = (field, value) => {
     onChange({ ...data, [field]: value });
@@ -78,16 +76,10 @@ export default function CertificateForm({ data, onChange }) {
             <Label htmlFor="technician_name">Technician Name *</Label>
             <Input
               id="technician_name"
-              list="technician-names"
               value={data.technician_name || ''}
               onChange={(e) => handleChange('technician_name', e.target.value)}
               placeholder="Enter technician name"
             />
-            <datalist id="technician-names">
-              {TECHNICIANS.map((name) => (
-                <option key={name} value={name} />
-              ))}
-            </datalist>
           </div>
         </div>
       </section>
