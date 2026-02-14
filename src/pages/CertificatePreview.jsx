@@ -209,14 +209,22 @@ export default function CertificatePreviewPage() {
         @media print {
           @page {
             size: A4 portrait;
-            margin: 12mm;
+            margin: 10mm;
+          }
+          html, body {
+            width: 210mm;
+            height: 297mm;
+            margin: 0;
+            padding: 0;
           }
           body {
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
           }
           #certificate-print {
-            width: calc(210mm - 24mm);
+            width: calc(210mm - 20mm);
+            min-height: calc(297mm - 20mm);
+            margin: 0 auto;
           }
         }
       `}</style>
