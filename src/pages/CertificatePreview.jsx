@@ -209,7 +209,7 @@ export default function CertificatePreviewPage() {
         @media print {
           @page {
             size: A4 portrait;
-            margin: 10mm;
+            margin: 8mm;
           }
           html, body {
             width: auto;
@@ -220,7 +220,7 @@ export default function CertificatePreviewPage() {
           body {
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
-            font-size: 16px;
+            font-size: 18px;
           }
           #certificate-print {
             width: 100%;
