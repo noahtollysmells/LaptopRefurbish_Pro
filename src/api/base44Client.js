@@ -3,8 +3,12 @@
 const load = (key, fallback) => {
   try {
     const v = localStorage.getItem(key)
-    return v ? JSON.parse(v) : fallback
-  } catch {
+    console.log(`[base44Client] Loading ${key} from localStorage:`, v ? `${v.length} chars` : 'null')
+    const parsed = v ? JSON.parse(v) : fallback
+    console.log(`[base44Client] Parsed ${key}:`, parsed?.length || 0, 'items')
+    return parsed
+  } catch (e) {
+    console.error(`[base44Client] Error loading ${key}:`, e)
     return fallback
   }
 }
@@ -21,7 +25,9 @@ const db = {
 }
 
 const refresh = (entity) => {
+  console.log(`[base44Client] Refreshing ${entity}...`)
   db[entity] = load(entity, [])
+  console.log(`[base44Client] Refreshed ${entity}, now has ${db[entity].length} items`)
 }
 
 const persist = (entity) => save(entity, db[entity])
