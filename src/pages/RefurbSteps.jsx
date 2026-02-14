@@ -135,6 +135,32 @@ export default function RefurbSteps() {
     }
   };
 
+  const handleCompleteLater = async () => {
+    const steps = [...(template?.ordered_steps || [])];
+    
+    // Find the current step
+    const currentStepIndex = steps.findIndex(s => s.step_number === currentStep);
+    if (currentStepIndex === -1) return;
+
+    // Remove current step and add to end
+    const [movedStep] = steps.splice(currentStepIndex, 1);
+    steps.push(movedStep);
+
+    // Renumber all steps
+    const renumberedSteps = steps.map((step, index) => ({
+      ...step,
+      step_number: index + 1
+    }));
+
+    // Update template with new order
+    await base44.entities.RefurbProcessTemplate.update(template.id, {
+      ordered_steps: renumberedSteps
+    });
+
+    // Reload data to reflect changes
+    await loadData();
+  };
+
   const goToCertificateForm = () => {
     navigate(createPageUrl(`CertificateForm?certId=${certificate.id}`));
   };
@@ -226,6 +252,7 @@ export default function RefurbSteps() {
             onComplete={handleStepComplete}
             onPrevious={handlePrevious}
             onNext={handleNext}
+            onCompleteLater={handleCompleteLater}
             isFirst={currentStep === 1}
             isLast={currentStep === steps.length}
           />

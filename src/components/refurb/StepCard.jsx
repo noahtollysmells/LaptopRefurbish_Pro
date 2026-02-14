@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ChevronLeft, ChevronRight, CheckCircle2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, CheckCircle2, Clock } from 'lucide-react';
 
 export default function StepCard({
   step,
@@ -11,6 +11,7 @@ export default function StepCard({
   onComplete,
   onPrevious,
   onNext,
+  onCompleteLater,
   isFirst,
   isLast
 }) {
@@ -127,24 +128,36 @@ export default function StepCard({
       </div>
 
       {/* Navigation */}
-      <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-between gap-4">
-        <Button
-          variant="outline"
-          onClick={onPrevious}
-          disabled={isFirst}
-          className="flex-1 h-12"
-        >
-          <ChevronLeft className="w-5 h-5 mr-1" />
-          Previous
-        </Button>
-        <Button
-          onClick={onNext}
-          disabled={step.required && !completed}
-          className="flex-1 h-12 bg-slate-800 hover:bg-slate-700 disabled:opacity-50"
-        >
-          {isLast ? 'Finish' : 'Next'}
-          {!isLast && <ChevronRight className="w-5 h-5 ml-1" />}
-        </Button>
+      <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 space-y-3">
+        {!isLast && onCompleteLater && (
+          <Button
+            variant="outline"
+            onClick={onCompleteLater}
+            className="w-full h-10 text-slate-600 hover:text-slate-700 hover:bg-slate-100"
+          >
+            <Clock className="w-4 h-4 mr-2" />
+            Complete Later
+          </Button>
+        )}
+        <div className="flex justify-between gap-4">
+          <Button
+            variant="outline"
+            onClick={onPrevious}
+            disabled={isFirst}
+            className="flex-1 h-12"
+          >
+            <ChevronLeft className="w-5 h-5 mr-1" />
+            Previous
+          </Button>
+          <Button
+            onClick={onNext}
+            disabled={step.required && !completed}
+            className="flex-1 h-12 bg-slate-800 hover:bg-slate-700 disabled:opacity-50"
+          >
+            {isLast ? 'Finish' : 'Next'}
+            {!isLast && <ChevronRight className="w-5 h-5 ml-1" />}
+          </Button>
+        </div>
       </div>
     </div>
   );
