@@ -53,10 +53,15 @@ const applyQuery = (rows, query) => {
     return rows
   }
 
-  const where = query.where ?? query
-  let out = rows.filter((r) => matchWhere(r, where))
-
+  // Separate where from orderBy/limit
   const orderBy = query.orderBy
+  const limit = query.limit
+  const where = query.where ?? (orderBy || limit ? null : query)
+
+  // Apply where filter only if it exists
+  let out = where ? rows.filter((r) => matchWhere(r, where)) : rows
+
+  // Apply orderBy
   if (orderBy?.field) {
     const dir = (orderBy.direction ?? "asc").toLowerCase()
     const f = orderBy.field
@@ -70,7 +75,8 @@ const applyQuery = (rows, query) => {
     })
   }
 
-  if (typeof query.limit === "number") out = out.slice(0, query.limit)
+  // Apply limit
+  if (typeof limit === "number") out = out.slice(0, limit)
   return out
 }
 
