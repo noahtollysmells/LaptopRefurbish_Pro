@@ -17,19 +17,15 @@ export default function ContinueRefurb() {
 
   const loadJobs = async () => {
     setLoading(true);
-    
-    // Get all process runs that are not completed
-    const processRuns = await base44.entities.RefurbProcessRun.filter(
-      { status: 'In Progress' },
-      '-created_date'
-    );
+    // Get all process runs, then keep anything not completed
+    const processRuns = await base44.entities.RefurbProcessRun.list('-created_date');
+    const activeRuns = processRuns.filter(run => run.status !== 'Completed');
 
     // Get certificates for these runs
-    const certificateIds = processRuns.map(r => r.certificate_id);
     const certificates = await base44.entities.RefurbCertificate.list('-created_date');
     
     // Match them up
-    const jobsData = processRuns.map(run => {
+    const jobsData = activeRuns.map(run => {
       const cert = certificates.find(c => c.id === run.certificate_id);
       return { processRun: run, certificate: cert };
     }).filter(job => job.certificate);
