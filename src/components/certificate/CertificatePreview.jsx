@@ -2,8 +2,11 @@ import React from 'react';
 import { format } from 'date-fns';
 import { Laptop } from 'lucide-react';
 
-export default function CertificatePreview({ certificate }) {
+export default function CertificatePreview({ certificate, stepResults = [] }) {
   if (!certificate) return null;
+  
+  // Filter step results that have notes
+  const stepNotesWithContent = stepResults.filter(r => r.notes && r.notes.trim());
 
   const getOSDisplay = () => {
     if (certificate.operating_system === 'Windows') {
@@ -23,9 +26,9 @@ export default function CertificatePreview({ certificate }) {
   };
 
   return (
-    <div className="bg-white p-8 max-w-3xl mx-auto print:p-6 print:max-w-none" id="certificate-print">
+    <div className="bg-white p-8 max-w-3xl mx-auto print:p-4 print:max-w-none print:text-xs" id="certificate-print">
       {/* Header */}
-      <div className="flex items-start justify-between mb-6 print:mb-4">
+      <div className="flex items-start justify-between mb-6 print:mb-2">
         <div className="flex items-center gap-3">
           <img 
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/697b77add3752e2758eee1dc/7ec3bf5f5_logo.png" 
@@ -42,15 +45,15 @@ export default function CertificatePreview({ certificate }) {
       </div>
 
       {/* Title */}
-      <div className="text-center mb-6 print:mb-4">
-        <h1 className="text-2xl font-bold text-slate-900 mb-2">
+      <div className="text-center mb-6 print:mb-2">
+        <h1 className="text-2xl print:text-lg font-bold text-slate-900 mb-2 print:mb-1">
           Certificate of Refurbishment
         </h1>
         <div className="h-px bg-slate-300"></div>
       </div>
 
       {/* Device and Technician Details */}
-      <div className="grid grid-cols-2 gap-x-8 gap-y-2 mb-6 print:mb-4 text-sm">
+      <div className="grid grid-cols-2 gap-x-8 gap-y-2 mb-6 print:mb-2 text-sm print:gap-y-0.5">
         <div>
           <span className="font-semibold text-slate-700">Device Number:</span>{' '}
           <span className="text-slate-900">{certificate.certificate_number}</span>
@@ -84,8 +87,8 @@ export default function CertificatePreview({ certificate }) {
       </div>
 
       {/* Physical Condition */}
-      <div className="mb-6 print:mb-4">
-        <h2 className="font-semibold text-slate-900 mb-2">Physical Condition</h2>
+      <div className="mb-6 print:mb-2">
+        <h2 className="font-semibold text-slate-900 mb-2 print:mb-1">Physical Condition</h2>
         <div className="text-sm space-y-1">
           <div>
             <span className="font-semibold text-slate-700">Condition / Grade:</span>{' '}
@@ -108,16 +111,16 @@ export default function CertificatePreview({ certificate }) {
 
       {/* Condition & Testing Notes */}
       {certificate.condition_testing_notes && (
-        <div className="mb-6 print:mb-4">
-          <h2 className="font-semibold text-slate-900 mb-2">Condition & Testing Notes</h2>
-          <div className="text-sm text-slate-900 whitespace-pre-wrap leading-relaxed">
+        <div className="mb-6 print:mb-2">
+          <h2 className="font-semibold text-slate-900 mb-2 print:mb-1">Condition & Testing Notes</h2>
+          <div className="text-sm text-slate-900 whitespace-pre-wrap leading-relaxed print:text-xs">
             {certificate.condition_testing_notes}
           </div>
         </div>
       )}
 
       {/* Tests and Software Confirmation */}
-      <div className="mb-6 print:mb-4">
+      <div className="mb-6 print:mb-2">
         <div className="text-sm space-y-0.5 text-slate-900">
           {certificate.tests_performed?.map((test, idx) => (
             <div key={idx}>• {test}</div>
@@ -142,36 +145,50 @@ export default function CertificatePreview({ certificate }) {
         </div>
       </div>
 
+      {/* Step Notes */}
+      {stepNotesWithContent.length > 0 && (
+        <div className="mb-6 print:mb-2">
+          <h2 className="font-semibold text-slate-900 mb-2 print:mb-1">Refurbishment Process Notes</h2>
+          <div className="text-sm text-slate-900 space-y-1 print:space-y-0.5 print:text-xs">
+            {stepNotesWithContent.map((result) => (
+              <div key={result.id}>
+                <span className="font-medium">Step {result.step_number}:</span> {result.notes}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Key Components */}
-      <div className="mb-6 print:mb-4">
-        <h2 className="font-semibold text-slate-900 mb-3">Key Components</h2>
-        <div className="grid grid-cols-2 gap-6">
+      <div className="mb-6 print:mb-2">
+        <h2 className="font-semibold text-slate-900 mb-3 print:mb-1">Key Components</h2>
+        <div className="grid grid-cols-2 gap-6 print:gap-3">
           <div>
-            <h3 className="font-semibold text-slate-700 text-sm mb-2">Technical Specifications</h3>
+            <h3 className="font-semibold text-slate-700 text-sm mb-2 print:mb-1">Technical Specifications</h3>
             {certificate.technical_specifications ? (
-              <div className="text-sm text-slate-900 whitespace-pre-wrap leading-relaxed">
+              <div className="text-sm text-slate-900 whitespace-pre-wrap leading-relaxed print:text-xs print:leading-snug">
                 {certificate.technical_specifications}
               </div>
             ) : (
-              <div className="text-sm text-slate-400">Not specified</div>
+              <div className="text-sm text-slate-400 print:text-xs">Not specified</div>
             )}
           </div>
           <div>
-            <h3 className="font-semibold text-slate-700 text-sm mb-2">Other Description</h3>
+            <h3 className="font-semibold text-slate-700 text-sm mb-2 print:mb-1">Other Description</h3>
             {certificate.other_description ? (
-              <div className="text-sm text-slate-900 whitespace-pre-wrap leading-relaxed">
+              <div className="text-sm text-slate-900 whitespace-pre-wrap leading-relaxed print:text-xs print:leading-snug">
                 {certificate.other_description}
               </div>
             ) : (
-              <div className="text-sm text-slate-400">Not specified</div>
+              <div className="text-sm text-slate-400 print:text-xs">Not specified</div>
             )}
           </div>
         </div>
       </div>
 
       {/* Sale Price */}
-      <div className="mt-8 pt-4 border-t border-slate-300">
-        <div className="text-lg font-bold text-slate-900">
+      <div className="mt-8 print:mt-2 pt-4 print:pt-2 border-t border-slate-300">
+        <div className="text-lg print:text-base font-bold text-slate-900">
           Sale Price: £{certificate.sale_price_gbp?.toFixed(2) || '0.00'}
         </div>
       </div>

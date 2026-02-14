@@ -194,3 +194,37 @@
     @apply text-amber-200;
   }
 }
+
+/* Print Styles - Single Page Certificate */
+@media print {
+  @page {
+    size: A4;
+    margin: 0.5cm;
+  }
+  
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  
+  #certificate-print {
+    page-break-after: avoid;
+    page-break-inside: avoid;
+  }
+  
+  /* Compact spacing for print */
+  #certificate-print h2 {
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  #certificate-print .text-sm {
+    font-size: 0.75rem;
+    line-height: 1.2;
+  }
+  
+  /* Hide empty sections on print */
+  #certificate-print > div:empty {
+    display: none;
+  }
+}

@@ -23,6 +23,7 @@ export default function CertificatePreviewPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [certificate, setCertificate] = useState(null);
+  const [stepResults, setStepResults] = useState([]);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deletePassword, setDeletePassword] = useState('');
   const [deleteError, setDeleteError] = useState('');
@@ -54,6 +55,15 @@ export default function CertificatePreviewPage() {
     setLoading(true);
     const certificates = await base44.entities.RefurbCertificate.filter({ id: certId });
     setCertificate(certificates[0]);
+    
+    // Load step results
+    const processRuns = await base44.entities.RefurbProcessRun.filter({ certificate_id: certId });
+    if (processRuns.length > 0) {
+      const runId = processRuns[0].id;
+      const results = await base44.entities.RefurbStepResult.filter({ process_run_id: runId });
+      setStepResults(results);
+    }
+    
     setLoading(false);
   };
 
@@ -140,7 +150,7 @@ export default function CertificatePreviewPage() {
       {/* Certificate Preview */}
       <div className="max-w-3xl mx-auto py-8 px-4 print:p-0 print:max-w-none">
         <div className="bg-white rounded-2xl shadow-lg print:shadow-none print:rounded-none">
-          <CertificatePreviewComponent certificate={certificate} />
+          <CertificatePreviewComponent certificate={certificate} stepResults={stepResults} />
         </div>
       </div>
 
