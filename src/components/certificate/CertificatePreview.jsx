@@ -35,7 +35,10 @@ export default function CertificatePreview({ certificate, stepResults = [], step
   };
 
   return (
-    <div className="bg-white p-8 max-w-3xl mx-auto print:p-5 print:max-w-none print:text-sm" id="certificate-print">
+    <div
+      className="bg-white p-8 max-w-3xl mx-auto print:p-6 print:max-w-none print:text-base"
+      id="certificate-print"
+    >
       {/* Header */}
       <div className="flex items-start justify-between mb-6 print:mb-2">
         <div className="flex items-center gap-3">

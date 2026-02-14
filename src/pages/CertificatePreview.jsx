@@ -208,11 +208,15 @@ export default function CertificatePreviewPage() {
       <style>{`
         @media print {
           @page {
-            margin: 1cm;
+            size: A4 portrait;
+            margin: 12mm;
           }
           body {
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
+          }
+          #certificate-print {
+            width: calc(210mm - 24mm);
           }
         }
       `}</style>
