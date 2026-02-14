@@ -10,6 +10,8 @@ import { ArrowLeft, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 
+const TECHNICIANS = ['Mike Thomas', 'Cassie Spry', 'Noah Tolly'];
+
 export default function NewRefurb() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -156,11 +158,17 @@ export default function NewRefurb() {
                 <Label htmlFor="technician_name">Technician Name *</Label>
                 <Input
                   id="technician_name"
+                  list="technician-names"
                   value={formData.technician_name}
                   onChange={(e) => handleChange('technician_name', e.target.value)}
                   placeholder="Enter your name"
                   className="h-12 mt-1"
                 />
+                <datalist id="technician-names">
+                  {TECHNICIANS.map((name) => (
+                    <option key={name} value={name} />
+                  ))}
+                </datalist>
               </div>
 
               <div>
