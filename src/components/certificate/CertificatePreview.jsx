@@ -35,7 +35,7 @@ export default function CertificatePreview({ certificate, stepResults = [], step
   };
 
   return (
-    <div className="bg-white p-8 max-w-3xl mx-auto print:p-4 print:max-w-none print:text-xs" id="certificate-print">
+    <div className="bg-white p-8 max-w-3xl mx-auto print:p-5 print:max-w-none print:text-sm" id="certificate-print">
       {/* Header */}
       <div className="flex items-start justify-between mb-6 print:mb-2">
         <div className="flex items-center gap-3">
@@ -158,7 +158,7 @@ export default function CertificatePreview({ certificate, stepResults = [], step
       {stepNotesWithContent.length > 0 && (
         <div className="mb-6 print:mb-2">
           <h2 className="font-semibold text-slate-900 mb-2 print:mb-1">Refurbishment Process Notes</h2>
-          <div className="text-sm text-slate-900 space-y-2 print:space-y-1 print:text-xs">
+          <div className="text-sm text-slate-900 space-y-2 print:space-y-1 print:text-sm">
             {stepNotesWithContent.map((result) => (
               <div key={result.id || result.step_number}>
                 <div className="font-medium text-slate-800">
