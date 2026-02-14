@@ -36,7 +36,7 @@ export default function CertificatePreview({ certificate, stepResults = [], step
 
   return (
     <div
-      className="bg-white p-8 max-w-3xl mx-auto print:p-8 print:max-w-none print:text-base"
+      className="bg-white p-8 max-w-3xl mx-auto print:p-10 print:max-w-none print:w-full print:mx-0 print:text-base"
       id="certificate-print"
     >
       {/* Header */}

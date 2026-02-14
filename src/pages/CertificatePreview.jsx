@@ -209,11 +209,11 @@ export default function CertificatePreviewPage() {
         @media print {
           @page {
             size: A4 portrait;
-            margin: 10mm;
+            margin: 8mm;
           }
           html, body {
-            width: 210mm;
-            height: 297mm;
+            width: auto;
+            height: auto;
             margin: 0;
             padding: 0;
           }
@@ -222,8 +222,8 @@ export default function CertificatePreviewPage() {
             print-color-adjust: exact;
           }
           #certificate-print {
-            width: calc(210mm - 20mm);
-            min-height: calc(297mm - 20mm);
+            width: 100%;
+            min-height: auto;
             margin: 0 auto;
           }
         }
