@@ -220,12 +220,14 @@ export default function CertificatePreviewPage() {
           body {
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
-            font-size: 16px;
+            font-size: 18px;
           }
           #certificate-print {
-            width: 100%;
+            width: calc(100% / 1.2);
             min-height: auto;
             margin: 0 auto;
+            transform: scale(1.2);
+            transform-origin: top left;
           }
         }
       `}</style>
