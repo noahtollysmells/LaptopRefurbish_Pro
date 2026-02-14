@@ -12,4 +12,4 @@ import { SHEETS_CONFIG } from './sheetsConfig';
 if (!SHEETS_CONFIG.configured) {
   console.error('Google Sheets not configured! See SHEETS_SETUP.md');
 }
-export { default } from './sheetsClient';
+export { default, base44 } from './sheetsClient';

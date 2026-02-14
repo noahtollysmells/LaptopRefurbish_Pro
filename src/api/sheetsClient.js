@@ -236,7 +236,7 @@ const makeEntityApi = (entity) => ({
   },
 });
 
-export const sheets44 = {
+export const base44 = {
   auth: {
     async me() {
       return { id: 'sheets-user', name: 'Sheets User' };
@@ -250,4 +250,4 @@ export const sheets44 = {
   },
 };
 
-export default sheets44;
+export default base44;
