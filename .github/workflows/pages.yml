@@ -37,6 +37,12 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Copy CNAME
+        run: |
+          if [ -f CNAME ]; then
+            cp CNAME docs/CNAME
+          fi
+
       - name: Upload artifact for GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:
