@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import { ChevronRight, Clock, CheckCircle2 } from 'lucide-react';
 
 export default function JobCard({ certificate, processRun, onClick }) {
+  const createdDate = certificate.created_date || certificate.created_at
   const getStatusBadge = () => {
     if (!processRun) {
       return (
@@ -55,7 +56,7 @@ export default function JobCard({ certificate, processRun, onClick }) {
         <div className="flex items-center gap-3">
           {getStatusBadge()}
           <span className="text-xs text-slate-400">
-            {format(new Date(certificate.created_date), 'dd MMM yyyy')}
+            {createdDate ? format(new Date(createdDate), 'dd MMM yyyy') : 'Date unavailable'}
           </span>
         </div>
       </div>

@@ -91,7 +91,13 @@ const makeEntityApi = (entity) => ({
     return db[entity].find((x) => x.id === id) ?? null
   },
   async create(data) {
-    const row = { id: crypto.randomUUID(), created_at: new Date().toISOString(), ...data }
+    const now = new Date().toISOString()
+    const row = {
+      id: crypto.randomUUID(),
+      created_at: now,
+      created_date: now,
+      ...data,
+    }
     db[entity].unshift(row)
     persist(entity)
     return row
@@ -99,7 +105,8 @@ const makeEntityApi = (entity) => ({
   async update(id, patch) {
     const i = db[entity].findIndex((x) => x.id === id)
     if (i === -1) throw new Error(`${entity} not found`)
-    db[entity][i] = { ...db[entity][i], ...patch, updated_at: new Date().toISOString() }
+    const now = new Date().toISOString()
+    db[entity][i] = { ...db[entity][i], ...patch, updated_at: now, updated_date: now }
     persist(entity)
     return db[entity][i]
   },

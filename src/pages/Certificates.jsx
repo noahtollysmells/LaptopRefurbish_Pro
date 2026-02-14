@@ -105,7 +105,9 @@ export default function Certificates() {
                       {cert.status || 'Draft'}
                     </span>
                     <span className="text-xs text-slate-400">
-                      {format(new Date(cert.created_date), 'dd MMM yyyy')}
+                      {cert.created_date || cert.created_at
+                        ? format(new Date(cert.created_date || cert.created_at), 'dd MMM yyyy')
+                        : 'Date unavailable'}
                     </span>
                   </div>
                 </div>
