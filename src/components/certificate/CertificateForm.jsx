@@ -2,6 +2,7 @@ import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -45,6 +46,19 @@ export default function CertificateForm({ data, onChange }) {
       ? current.filter(w => w !== work)
       : [...current, work];
     handleChange('software_work', updated);
+  };
+
+  const handleCheckAllSoftware = () => {
+    const current = data.software_work || [];
+    const allChecked = SOFTWARE_WORK.every(work => current.includes(work));
+    
+    if (allChecked) {
+      // Uncheck all
+      handleChange('software_work', []);
+    } else {
+      // Check all
+      handleChange('software_work', [...SOFTWARE_WORK]);
+    }
   };
 
   return (
@@ -274,7 +288,17 @@ export default function CertificateForm({ data, onChange }) {
 
       {/* Software Work */}
       <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-slate-800 border-b pb-2">Software Work Completed</h2>
+        <div className="flex items-center justify-between border-b pb-2">
+          <h2 className="text-lg font-semibold text-slate-800">Software Work Completed</h2>
+          <Button 
+            type="button" 
+            variant="outline" 
+            size="sm"
+            onClick={handleCheckAllSoftware}
+          >
+            {(data.software_work || []).length === SOFTWARE_WORK.length ? 'Uncheck All' : 'Check All'}
+          </Button>
+        </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {SOFTWARE_WORK.map((work) => (
