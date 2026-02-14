@@ -20,6 +20,10 @@ const db = {
   RefurbStepResult: load("RefurbStepResult", []),
 }
 
+const refresh = (entity) => {
+  db[entity] = load(entity, [])
+}
+
 const persist = (entity) => save(entity, db[entity])
 
 const matchWhere = (row, where) => {
@@ -74,20 +78,25 @@ const applyQuery = (rows, query) => {
 
 const makeEntityApi = (entity) => ({
   async list(query) {
+    refresh(entity)
     return applyQuery([...db[entity]], query)
   },
   async filter(query) {
+    refresh(entity)
     return applyQuery([...db[entity]], query)
   },
   async first(query) {
+    refresh(entity)
     const out = applyQuery([...db[entity]], query)
     return out[0] ?? null
   },
   async count(query) {
+    refresh(entity)
     const out = applyQuery([...db[entity]], query)
     return out.length
   },
   async get(id) {
+    refresh(entity)
     return db[entity].find((x) => x.id === id) ?? null
   },
   async create(data) {
