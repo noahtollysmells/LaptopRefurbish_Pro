@@ -125,11 +125,11 @@
   }
 
   .dark .text-slate-500 {
-    @apply text-slate-400;
+    color: #94a3b8;
   }
 
   .dark .text-slate-400 {
-    @apply text-slate-500;
+    color: #cbd5e1;
   }
 
   .dark .border-slate-100 {
