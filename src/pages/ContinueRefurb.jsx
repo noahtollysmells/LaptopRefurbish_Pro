@@ -15,6 +15,15 @@ export default function ContinueRefurb() {
     loadJobs();
   }, []);
 
+  // Reload when page becomes visible (catches navigation back from other pages)
+  useEffect(() => {
+    const handleFocus = () => {
+      loadJobs();
+    };
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, []);
+
   const loadJobs = async () => {
     setLoading(true);
     // Get all process runs, then keep anything not completed
