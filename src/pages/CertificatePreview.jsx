@@ -223,9 +223,9 @@ export default function CertificatePreviewPage() {
             font-size: 18px;
           }
           #certificate-print {
-            width: 100%;
+            width: calc(210mm - 16mm);
             min-height: auto;
-            margin: 0 auto;
+            margin: 0;
             transform: none;
           }
         }
