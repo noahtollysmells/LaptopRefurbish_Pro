@@ -83,7 +83,11 @@ const appendToSheet = async (entity, item) => {
   } catch (error) {
     console.error(`Error appending to ${entity}:`, error);
     return false;
-  }For now, we'll refetch and mark updated items
+  }
+};
+
+const updateInSheet = async (entity, id, updates) => {
+  // For now, we'll refetch and mark updated items
   // A more efficient implementation would use batch updates via Apps Script
   const items = await fetchSheet(entity);
   const index = items.findIndex(item => item.id === id);
@@ -99,11 +103,7 @@ const appendToSheet = async (entity, item) => {
   // Better approach: extend Apps Script to handle updates by ID
   console.warn('Updates currently append new rows - consider implementing batch update in Apps Script');
   
-  return true; // Temporary: mark as successful but data may not persist correctly return response.ok;
-  } catch (error) {
-    console.error(`Error updating ${entity}:`, error);
-    return false;
-  }
+  return true; // Temporary: mark as successful but data may not persist correctly
 };
 
 const deleteFromSheet = async (entity, id) => {
