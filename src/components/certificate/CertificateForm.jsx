@@ -61,6 +61,19 @@ export default function CertificateForm({ data, onChange }) {
     }
   };
 
+  const handleCheckAllTests = () => {
+    const current = data.tests_performed || [];
+    const allChecked = TESTS.every(test => current.includes(test));
+    
+    if (allChecked) {
+      // Uncheck all
+      handleChange('tests_performed', []);
+    } else {
+      // Check all
+      handleChange('tests_performed', [...TESTS]);
+    }
+  };
+
   return (
     <div className="space-y-8">
       {/* Basic Info */}
@@ -196,7 +209,17 @@ export default function CertificateForm({ data, onChange }) {
 
       {/* Tests Performed */}
       <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-slate-800 border-b pb-2">Tests Performed</h2>
+        <div className="flex items-center justify-between border-b pb-2">
+          <h2 className="text-lg font-semibold text-slate-800">Tests Performed</h2>
+          <Button 
+            type="button" 
+            variant="outline" 
+            size="sm"
+            onClick={handleCheckAllTests}
+          >
+            {(data.tests_performed || []).length === TESTS.length ? 'Uncheck All' : 'Check All'}
+          </Button>
+        </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {TESTS.map((test) => (
