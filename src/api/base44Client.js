@@ -46,6 +46,7 @@ const applyQuery = (rows, query) => {
   // - function predicate
   // - { field: value } simple where
   // - { where: {...}, limit, orderBy: {field, direction} }
+  console.log('[base44Client] applyQuery input:', { rowCount: rows.length, query })
   if (!query) return rows
 
   if (typeof query === "function") return rows.filter(query)
@@ -56,6 +57,7 @@ const applyQuery = (rows, query) => {
     if (str.length > 0) {
       const desc = str.startsWith('-')
       const field = desc ? str.slice(1) : str
+      console.log('[base44Client] String query parsed:', { field, direction: desc ? 'desc' : 'asc' })
       return applyQuery(rows, { orderBy: { field, direction: desc ? 'desc' : 'asc' } })
     }
     return rows
@@ -63,6 +65,7 @@ const applyQuery = (rows, query) => {
 
   const where = query.where ?? query
   let out = rows.filter((r) => matchWhere(r, where))
+  console.log('[base44Client] After where filter:', out.length, 'items')
 
   const orderBy = query.orderBy
   if (orderBy?.field) {
@@ -76,9 +79,11 @@ const applyQuery = (rows, query) => {
       if (bv === undefined) return -1
       return dir === "desc" ? (av < bv ? 1 : -1) : (av < bv ? -1 : 1)
     })
+    console.log('[base44Client] After orderBy:', out.length, 'items')
   }
 
   if (typeof query.limit === "number") out = out.slice(0, query.limit)
+  console.log('[base44Client] applyQuery output:', out.length, 'items')
   return out
 }
 
