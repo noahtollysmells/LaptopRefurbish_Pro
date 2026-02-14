@@ -6,5 +6,5 @@ export default defineConfig({
   base: "./",
   plugins: [react()],
   resolve: { alias: { "@": path.resolve(__dirname, "./src") } },
-  build: { sourcemap: true },
+  build: { outDir: "docs", sourcemap: true },
 })
