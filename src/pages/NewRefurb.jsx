@@ -10,6 +10,8 @@ import { ArrowLeft, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 
+const TOUCHSCREEN_STEP_KEY = 'touchscreen_check';
+
 export default function NewRefurb() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -68,6 +70,13 @@ export default function NewRefurb() {
         active: true,
         ordered_steps: getDefaultSteps()
       });
+    } else {
+      const updatedSteps = ensureTouchscreenStep(template.ordered_steps || []);
+      if (updatedSteps !== (template.ordered_steps || [])) {
+        template = await base44.entities.RefurbProcessTemplate.update(template.id, {
+          ordered_steps: updatedSteps
+        });
+      }
     }
 
     // Create the process run
@@ -212,14 +221,44 @@ function getDefaultSteps() {
     { step_number: 6, step_title: 'Create local user account', step_instructions: 'When prompted for network connection:\n\n• Select \'I don\'t have internet\'.\n• Create a local user account named \'user\'.\n• Do not set a password.', acceptance_criteria: 'Local user account created', required: true, notes_allowed: true },
     { step_number: 7, step_title: 'Install manufacturer software and run diagnostics', step_instructions: 'Connect to the internet and install the appropriate tool:\n\n• Dell SupportAssist\n• Lenovo Vantage\n• HP Support Assistant\n\nRun basic diagnostics and then a full hardware scan.', acceptance_criteria: 'Diagnostics software installed and scan completed', required: true, notes_allowed: true },
     { step_number: 8, step_title: 'Test screen', step_instructions: 'Inspect for dead pixels, brightness issues, and backlight problems.', acceptance_criteria: 'Screen functioning correctly', required: true, notes_allowed: true },
-    { step_number: 9, step_title: 'Test keyboard and trackpad', step_instructions: 'Verify all keys and touchpad functions correctly.', acceptance_criteria: 'Keyboard and trackpad working', required: true, notes_allowed: true },
-    { step_number: 10, step_title: 'Test ports', step_instructions: 'Test all applicable ports including USB, HDMI, USB-C, and others.', acceptance_criteria: 'All ports functional', required: true, notes_allowed: true },
-    { step_number: 11, step_title: 'Test audio, microphone, and webcam', step_instructions: 'Confirm speakers, mic input, and camera function correctly.', acceptance_criteria: 'Audio, mic, and camera working', required: true, notes_allowed: true },
-    { step_number: 12, step_title: 'Create battery health report and record capacity percentage', step_instructions: 'Open Command Prompt and run:\npowercfg /batteryreport\n\nThe battery report will be saved in the root user folder.\n\nFrom the report:\n\n• Identify the Full Charge Capacity (larger number)\n• Identify the Current Capacity (lower number)\n• Divide the current capacity by the full charge capacity and convert the result into a percentage.\n\nRecord the final battery health percentage in the notes field for this step.', acceptance_criteria: 'Battery health percentage recorded', required: true, notes_allowed: true },
-    { step_number: 13, step_title: 'Complete and print refurb certificate', step_instructions: 'Fill in all certificate details including tests, OS, specifications, and notes. Preview and print the Certificate of Refurbishment.', acceptance_criteria: 'Certificate completed and printed', required: true, notes_allowed: true },
-    { step_number: 14, step_title: 'Clean device', step_instructions: 'Clean screen, keyboard, ports, and exterior surfaces.', acceptance_criteria: 'Device cleaned and presentable', required: true, notes_allowed: true },
-    { step_number: 15, step_title: 'Assign condition grade', step_instructions: 'Assign Grade A, B, or C based on cosmetic condition.', acceptance_criteria: 'Grade assigned', required: true, notes_allowed: true },
-    { step_number: 16, step_title: 'Confirm device ready for sale', step_instructions: 'Final check that all required steps are complete.', acceptance_criteria: 'Device approved for sale', required: true, notes_allowed: true },
-    { step_number: 17, step_title: 'Photograph laptop from the front, both sides, and top', step_instructions: 'Take photos ready for listing on social media and website. (Sales stock only - skip for refurb services or special orders)', acceptance_criteria: 'Photos taken and ready for listing', required: false, notes_allowed: true }
+    { step_number: 9, step_key: TOUCHSCREEN_STEP_KEY, step_title: 'Confirm if screen is touchscreen', step_instructions: 'Select whether the laptop has touchscreen support.', acceptance_criteria: 'Touchscreen status recorded', required: true, notes_allowed: true, input_type: 'touchscreen' },
+    { step_number: 10, step_title: 'Test keyboard and trackpad', step_instructions: 'Verify all keys and touchpad functions correctly.', acceptance_criteria: 'Keyboard and trackpad working', required: true, notes_allowed: true },
+    { step_number: 11, step_title: 'Test ports', step_instructions: 'Test all applicable ports including USB, HDMI, USB-C, and others.', acceptance_criteria: 'All ports functional', required: true, notes_allowed: true },
+    { step_number: 12, step_title: 'Test audio, microphone, and webcam', step_instructions: 'Confirm speakers, mic input, and camera function correctly.', acceptance_criteria: 'Audio, mic, and camera working', required: true, notes_allowed: true },
+    { step_number: 13, step_title: 'Create battery health report and record capacity percentage', step_instructions: 'Open Command Prompt and run:\npowercfg /batteryreport\n\nThe battery report will be saved in the root user folder.\n\nFrom the report:\n\n• Identify the Full Charge Capacity (larger number)\n• Identify the Current Capacity (lower number)\n• Divide the current capacity by the full charge capacity and convert the result into a percentage.\n\nRecord the final battery health percentage in the notes field for this step.', acceptance_criteria: 'Battery health percentage recorded', required: true, notes_allowed: true },
+    { step_number: 14, step_title: 'Complete and print refurb certificate', step_instructions: 'Fill in all certificate details including tests, OS, specifications, and notes. Preview and print the Certificate of Refurbishment.', acceptance_criteria: 'Certificate completed and printed', required: true, notes_allowed: true },
+    { step_number: 15, step_title: 'Clean device', step_instructions: 'Clean screen, keyboard, ports, and exterior surfaces.', acceptance_criteria: 'Device cleaned and presentable', required: true, notes_allowed: true },
+    { step_number: 16, step_title: 'Assign condition grade', step_instructions: 'Assign Grade A, B, or C based on cosmetic condition.', acceptance_criteria: 'Grade assigned', required: true, notes_allowed: true },
+    { step_number: 17, step_title: 'Confirm device ready for sale', step_instructions: 'Final check that all required steps are complete.', acceptance_criteria: 'Device approved for sale', required: true, notes_allowed: true },
+    { step_number: 18, step_title: 'Photograph laptop from the front, both sides, and top', step_instructions: 'Take photos ready for listing on social media and website. (Sales stock only - skip for refurb services or special orders)', acceptance_criteria: 'Photos taken and ready for listing', required: false, notes_allowed: true }
   ];
+}
+
+function ensureTouchscreenStep(steps) {
+  if (!Array.isArray(steps) || steps.length === 0) return getDefaultSteps();
+
+  const hasTouchscreenStep = steps.some(
+    (step) => step.step_key === TOUCHSCREEN_STEP_KEY || step.input_type === 'touchscreen'
+  );
+  if (hasTouchscreenStep) return steps;
+
+  const normalized = [...steps]
+    .sort((a, b) => Number(a.step_number || 0) - Number(b.step_number || 0));
+  const insertAfterIndex = normalized.findIndex((step) => step.step_title === 'Test screen');
+  const insertIndex = insertAfterIndex >= 0 ? insertAfterIndex + 1 : normalized.length;
+
+  normalized.splice(insertIndex, 0, {
+    step_key: TOUCHSCREEN_STEP_KEY,
+    step_title: 'Confirm if screen is touchscreen',
+    step_instructions: 'Select whether the laptop has touchscreen support.',
+    acceptance_criteria: 'Touchscreen status recorded',
+    required: true,
+    notes_allowed: true,
+    input_type: 'touchscreen'
+  });
+
+  return normalized.map((step, index) => ({
+    ...step,
+    step_number: index + 1
+  }));
 }

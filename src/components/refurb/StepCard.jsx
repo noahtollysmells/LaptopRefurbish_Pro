@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import { ChevronLeft, ChevronRight, CheckCircle2, Clock } from 'lucide-react';
 
 export default function StepCard({
@@ -17,14 +19,20 @@ export default function StepCard({
 }) {
   const [notes, setNotes] = useState(stepResult?.notes || '');
   const [completed, setCompleted] = useState(stepResult?.completed || false);
+  const [touchscreenValue, setTouchscreenValue] = useState('');
+
+  const isTouchscreenStep = step.input_type === 'touchscreen' || step.step_key === 'touchscreen_check';
 
   // Sync local state with stepResult prop when it changes (e.g., navigating between steps)
   useEffect(() => {
     setNotes(stepResult?.notes || '');
     setCompleted(stepResult?.completed || false);
+    setTouchscreenValue(extractTouchscreenValue(stepResult?.notes || ''));
   }, [stepResult, step.step_number]);
 
   const handleComplete = () => {
+    if (isTouchscreenStep && !touchscreenValue) return;
+
     const newCompleted = !completed;
     setCompleted(newCompleted);
     // Only update this specific step's completion status
@@ -44,6 +52,13 @@ export default function StepCard({
     if (notes !== (stepResult?.notes || '')) {
       onComplete(step.step_number, completed, notes);
     }
+  };
+
+  const handleTouchscreenChange = (value) => {
+    const nextNotes = value === 'yes' ? 'Touchscreen: Yes' : 'Touchscreen: No';
+    setTouchscreenValue(value);
+    setNotes(nextNotes);
+    onComplete(step.step_number, completed, nextNotes);
   };
 
   return (
@@ -93,6 +108,28 @@ export default function StepCard({
           </div>
         )}
 
+        {isTouchscreenStep && (
+          <div>
+            <Label className="block text-sm font-medium text-slate-700 mb-3">
+              Is this laptop touchscreen?
+            </Label>
+            <RadioGroup
+              value={touchscreenValue}
+              onValueChange={handleTouchscreenChange}
+              className="space-y-3"
+            >
+              <div className="flex items-center space-x-3">
+                <RadioGroupItem value="yes" id={`touchscreen-yes-${step.step_number}`} />
+                <Label htmlFor={`touchscreen-yes-${step.step_number}`} className="cursor-pointer">Yes</Label>
+              </div>
+              <div className="flex items-center space-x-3">
+                <RadioGroupItem value="no" id={`touchscreen-no-${step.step_number}`} />
+                <Label htmlFor={`touchscreen-no-${step.step_number}`} className="cursor-pointer">No</Label>
+              </div>
+            </RadioGroup>
+          </div>
+        )}
+
         {/* Notes */}
         {step.notes_allowed && (
           <div>
@@ -103,9 +140,10 @@ export default function StepCard({
               value={notes}
               onChange={(e) => handleNotesChange(e.target.value)}
               onBlur={handleNotesBlur}
-              placeholder="Add any notes for this step..."
+              placeholder={isTouchscreenStep ? 'Touchscreen status is auto-filled above.' : 'Add any notes for this step...'}
               rows={3}
               className="resize-none"
+              readOnly={isTouchscreenStep}
             />
           </div>
         )}
@@ -117,6 +155,7 @@ export default function StepCard({
             checked={completed}
             onCheckedChange={handleComplete}
             className="mt-0.5 h-6 w-6"
+            disabled={isTouchscreenStep && !touchscreenValue}
           />
           <label
             htmlFor={`complete-${step.step_number}`}
@@ -161,4 +200,11 @@ export default function StepCard({
       </div>
     </div>
   );
+}
+
+function extractTouchscreenValue(notes) {
+  const normalized = String(notes || '').trim().toLowerCase();
+  if (normalized.includes('touchscreen: yes')) return 'yes';
+  if (normalized.includes('touchscreen: no')) return 'no';
+  return '';
 }
