@@ -195,35 +195,64 @@
   }
 }
 
-/* Print Styles - Single Page Certificate */
+/* Print Styles - Certificate pagination */
 @media print {
   @page {
-    size: A4;
-    margin: 0.5cm;
+    size: A4 portrait;
+    margin: 8mm;
   }
-  
+
+  html,
+  body {
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: 0;
+  }
+
   body {
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
   }
-  
+
   #certificate-print {
-    page-break-after: avoid;
-    page-break-inside: avoid;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    page-break-inside: auto;
+    break-inside: auto;
   }
-  
-  /* Compact spacing for print */
-  #certificate-print h2 {
-    font-size: 0.875rem;
-    margin-bottom: 0.25rem;
+
+  #certificate-print > div {
+    page-break-inside: auto;
+    break-inside: auto;
   }
-  
-  #certificate-print .text-sm {
-    font-size: 0.75rem;
+
+  #certificate-print h1 {
+    font-size: 1rem;
     line-height: 1.2;
   }
-  
-  /* Hide empty sections on print */
+
+  #certificate-print h2,
+  #certificate-print h3 {
+    font-size: 0.875rem;
+    line-height: 1.25;
+    margin-bottom: 0.25rem;
+    page-break-after: avoid;
+    break-after: avoid-page;
+  }
+
+  #certificate-print .text-sm {
+    font-size: 0.72rem;
+    line-height: 1.25;
+  }
+
+  #certificate-print .whitespace-pre-wrap {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
   #certificate-print > div:empty {
     display: none;
   }

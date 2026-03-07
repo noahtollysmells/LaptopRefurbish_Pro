@@ -203,33 +203,6 @@ export default function CertificatePreviewPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
-      {/* Print Styles */}
-      <style>{`
-        @media print {
-          @page {
-            size: A4 portrait;
-            margin: 8mm;
-          }
-          html, body {
-            width: auto;
-            height: auto;
-            margin: 0;
-            padding: 0;
-          }
-          body {
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-            font-size: 18px;
-          }
-          #certificate-print {
-            width: calc(210mm - 16mm);
-            min-height: auto;
-            margin: 0;
-            transform: none;
-          }
-        }
-      `}</style>
     </div>
   );
 }
