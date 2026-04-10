@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Slider } from "@/components/ui/slider";
 
 const TESTS = [
   'Memory tested',
@@ -29,18 +28,8 @@ const SOFTWARE_WORK = [
 ];
 
 export default function CertificateForm({ data, onChange }) {
-  const batteryHealthValue = getBatteryHealthValue(data);
-
   const handleChange = (field, value) => {
     onChange({ ...data, [field]: value });
-  };
-
-  const handleBatteryHealthChange = (nextValue) => {
-    const value = Number(nextValue);
-    if (Number.isNaN(value)) return;
-
-    const clamped = Math.min(100, Math.max(0, value));
-    handleChange('battery_health_percentage', clamped);
   };
 
   const handleTestToggle = (test) => {
@@ -206,30 +195,6 @@ export default function CertificateForm({ data, onChange }) {
           />
         </div>
         
-        <div>
-          <Label htmlFor="battery_health_percentage">Battery Health (%)</Label>
-          <div className="mt-2 space-y-3">
-            <Slider
-              value={[batteryHealthValue]}
-              onValueChange={(value) => handleBatteryHealthChange(value?.[0])}
-              min={0}
-              max={100}
-              step={1}
-              className="py-2"
-            />
-            <Input
-              id="battery_health_percentage"
-              type="number"
-              min="0"
-              max="100"
-              step="1"
-              value={batteryHealthValue}
-              onChange={(e) => handleBatteryHealthChange(e.target.value)}
-              placeholder="Battery health %"
-            />
-          </div>
-        </div>
-
         <div>
           <Label htmlFor="condition_testing_notes">Condition & Testing Notes</Label>
           <Textarea
@@ -441,19 +406,4 @@ export default function CertificateForm({ data, onChange }) {
       </section>
     </div>
   );
-}
-
-function getBatteryHealthValue(data) {
-  const direct = Number(data?.battery_health_percentage);
-  if (!Number.isNaN(direct) && direct >= 0 && direct <= 100) {
-    return direct;
-  }
-
-  const notes = String(data?.condition_testing_notes || '');
-  const match = notes.match(/battery\s*health\s*:?\s*(\d{1,3})\s*%/i) || notes.match(/(\d{1,3})\s*%/);
-  if (!match) return 0;
-
-  const parsed = Number(match[1]);
-  if (Number.isNaN(parsed)) return 0;
-  return Math.min(100, Math.max(0, parsed));
 }

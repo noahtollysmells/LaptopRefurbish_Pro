@@ -4,7 +4,7 @@ import { Laptop } from 'lucide-react';
 
 export default function CertificatePreview({ certificate, stepResults = [], steps = [] }) {
   if (!certificate) return null;
-  const batteryHealthDisplay = getBatteryHealthDisplay(certificate);
+  const batteryHealthDisplay = getLatestStep13BatteryHealth(stepResults);
   
   // Filter step results that have notes and enrich with step titles
   const stepNotesWithContent = stepResults
@@ -213,14 +213,19 @@ export default function CertificatePreview({ certificate, stepResults = [], step
   );
 }
 
-function getBatteryHealthDisplay(certificate) {
-  const direct = Number(certificate?.battery_health_percentage);
-  if (!Number.isNaN(direct) && direct >= 0 && direct <= 100) {
-    return `${direct}%`;
-  }
+function getLatestStep13BatteryHealth(stepResults = []) {
+  const step13Results = stepResults
+    .filter((result) => Number(result?.step_number) === 13)
+    .sort((a, b) => {
+      const aTime = new Date(a?.completed_at || a?.updated_date || a?.created_date || 0).getTime();
+      const bTime = new Date(b?.completed_at || b?.updated_date || b?.created_date || 0).getTime();
+      return bTime - aTime;
+    });
 
-  const notes = String(certificate?.condition_testing_notes || '');
-  const match = notes.match(/battery\s*health\s*:?\s*(\d{1,3})\s*%/i) || notes.match(/(\d{1,3})\s*%/);
+  const latest = step13Results[0];
+  if (!latest?.notes) return '';
+
+  const match = String(latest.notes).match(/(\d{1,3})\s*%/);
   if (!match) return '';
 
   const parsed = Number(match[1]);
