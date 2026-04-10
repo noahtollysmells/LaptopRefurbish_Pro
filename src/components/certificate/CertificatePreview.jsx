@@ -4,6 +4,7 @@ import { Laptop } from 'lucide-react';
 
 export default function CertificatePreview({ certificate, stepResults = [], steps = [] }) {
   if (!certificate) return null;
+  const batteryHealthDisplay = getBatteryHealthDisplay(certificate);
   
   // Filter step results that have notes and enrich with step titles
   const stepNotesWithContent = stepResults
@@ -112,10 +113,10 @@ export default function CertificatePreview({ certificate, stepResults = [], step
               <div className="text-slate-900 whitespace-pre-wrap mt-1">{certificate.physical_condition_notes}</div>
             </div>
           )}
-          {certificate.condition_testing_notes && (
+          {batteryHealthDisplay && (
             <div>
               <span className="font-semibold text-slate-700">Battery Report Results:</span>
-              <div className="text-slate-900 whitespace-pre-wrap mt-1">{certificate.condition_testing_notes}</div>
+              <div className="text-slate-900 whitespace-pre-wrap mt-1">Battery Health: {batteryHealthDisplay}</div>
             </div>
           )}
         </div>
@@ -210,4 +211,19 @@ export default function CertificatePreview({ certificate, stepResults = [], step
       </div>
     </div>
   );
+}
+
+function getBatteryHealthDisplay(certificate) {
+  const direct = Number(certificate?.battery_health_percentage);
+  if (!Number.isNaN(direct) && direct >= 0 && direct <= 100) {
+    return `${direct}%`;
+  }
+
+  const notes = String(certificate?.condition_testing_notes || '');
+  const match = notes.match(/battery\s*health\s*:?\s*(\d{1,3})\s*%/i) || notes.match(/(\d{1,3})\s*%/);
+  if (!match) return '';
+
+  const parsed = Number(match[1]);
+  if (Number.isNaN(parsed)) return '';
+  return `${Math.min(100, Math.max(0, parsed))}%`;
 }

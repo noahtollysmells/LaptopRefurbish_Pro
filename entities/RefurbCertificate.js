@@ -50,6 +50,10 @@
       "type": "string",
       "description": "Notes about testing"
     },
+    "battery_health_percentage": {
+      "type": "number",
+      "description": "Battery health percentage (0-100)"
+    },
     "tests_performed": {
       "type": "array",
       "items": {
