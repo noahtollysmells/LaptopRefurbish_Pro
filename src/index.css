@@ -199,15 +199,16 @@
 @media print {
   @page {
     size: A4 portrait;
-    margin: 8mm;
+    margin: 0;
   }
 
   html,
   body {
-    width: auto;
-    height: auto;
-    margin: 0;
-    padding: 0;
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
   }
 
   body {
@@ -216,12 +217,15 @@
   }
 
   #certificate-print {
-    width: 100%;
+    width: 198mm;
+    min-height: 285mm;
     max-width: none;
-    margin: 0;
-    padding: 0;
-    page-break-inside: auto;
-    break-inside: auto;
+    margin: 6mm auto;
+    padding: 8mm;
+    box-sizing: border-box;
+    page-break-inside: avoid;
+    break-inside: avoid-page;
+    overflow: hidden;
   }
 
   #certificate-print > div {
