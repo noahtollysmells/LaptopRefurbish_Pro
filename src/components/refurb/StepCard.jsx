@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
 import { ChevronLeft, ChevronRight, CheckCircle2, Clock } from 'lucide-react';
 
 export default function StepCard({
@@ -20,18 +21,25 @@ export default function StepCard({
   const [notes, setNotes] = useState(stepResult?.notes || '');
   const [completed, setCompleted] = useState(stepResult?.completed || false);
   const [touchscreenValue, setTouchscreenValue] = useState('');
+  const [batteryHealthValue, setBatteryHealthValue] = useState(null);
 
   const isTouchscreenStep = step.input_type === 'touchscreen' || step.step_key === 'touchscreen_check';
+  const isBatteryHealthStep =
+    step.input_type === 'battery_health' ||
+    step.step_number === 13 ||
+    String(step.step_title || '').toLowerCase().includes('battery health');
 
   // Sync local state with stepResult prop when it changes (e.g., navigating between steps)
   useEffect(() => {
     setNotes(stepResult?.notes || '');
     setCompleted(stepResult?.completed || false);
     setTouchscreenValue(extractTouchscreenValue(stepResult?.notes || ''));
+    setBatteryHealthValue(extractBatteryHealthValue(stepResult?.notes || ''));
   }, [stepResult, step.step_number]);
 
   const handleComplete = () => {
     if (isTouchscreenStep && !touchscreenValue) return;
+    if (isBatteryHealthStep && batteryHealthValue === null) return;
 
     const newCompleted = !completed;
     setCompleted(newCompleted);
@@ -57,6 +65,17 @@ export default function StepCard({
   const handleTouchscreenChange = (value) => {
     const nextNotes = value === 'yes' ? 'Touchscreen: Yes' : 'Touchscreen: No';
     setTouchscreenValue(value);
+    setNotes(nextNotes);
+    onComplete(step.step_number, completed, nextNotes);
+  };
+
+  const handleBatteryHealthChange = (value) => {
+    const percentage = value?.[0];
+    if (percentage === undefined) return;
+
+    const nextValue = Number(percentage);
+    const nextNotes = `Battery Health: ${nextValue}%`;
+    setBatteryHealthValue(nextValue);
     setNotes(nextNotes);
     onComplete(step.step_number, completed, nextNotes);
   };
@@ -130,6 +149,22 @@ export default function StepCard({
           </div>
         )}
 
+        {isBatteryHealthStep && (
+          <div>
+            <Label className="block text-sm font-medium text-slate-700 mb-3">
+              Battery Health Percentage: {batteryHealthValue ?? 0}%
+            </Label>
+            <Slider
+              value={[batteryHealthValue ?? 0]}
+              onValueChange={handleBatteryHealthChange}
+              min={0}
+              max={100}
+              step={1}
+              className="py-2"
+            />
+          </div>
+        )}
+
         {/* Notes */}
         {step.notes_allowed && (
           <div>
@@ -140,10 +175,10 @@ export default function StepCard({
               value={notes}
               onChange={(e) => handleNotesChange(e.target.value)}
               onBlur={handleNotesBlur}
-              placeholder={isTouchscreenStep ? 'Touchscreen status is auto-filled above.' : 'Add any notes for this step...'}
+              placeholder={isTouchscreenStep || isBatteryHealthStep ? 'This field is auto-filled above.' : 'Add any notes for this step...'}
               rows={3}
               className="resize-none"
-              readOnly={isTouchscreenStep}
+              readOnly={isTouchscreenStep || isBatteryHealthStep}
             />
           </div>
         )}
@@ -155,7 +190,7 @@ export default function StepCard({
             checked={completed}
             onCheckedChange={handleComplete}
             className="mt-0.5 h-6 w-6"
-            disabled={isTouchscreenStep && !touchscreenValue}
+            disabled={(isTouchscreenStep && !touchscreenValue) || (isBatteryHealthStep && batteryHealthValue === null)}
           />
           <label
             htmlFor={`complete-${step.step_number}`}
@@ -207,4 +242,15 @@ function extractTouchscreenValue(notes) {
   if (normalized.includes('touchscreen: yes')) return 'yes';
   if (normalized.includes('touchscreen: no')) return 'no';
   return '';
+}
+
+function extractBatteryHealthValue(notes) {
+  const match = String(notes || '').match(/(\d{1,3})\s*%/);
+  if (!match) return null;
+
+  const parsed = Number(match[1]);
+  if (Number.isNaN(parsed)) return null;
+  if (parsed < 0 || parsed > 100) return null;
+
+  return parsed;
 }
