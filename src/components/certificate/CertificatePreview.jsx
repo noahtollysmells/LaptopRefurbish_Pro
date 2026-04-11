@@ -2,9 +2,15 @@ import React from 'react';
 import { format } from 'date-fns';
 import { Laptop } from 'lucide-react';
 
-export default function CertificatePreview({ certificate, stepResults = [], steps = [] }) {
+export default function CertificatePreview({
+  certificate,
+  stepResults = [],
+  steps = [],
+  batteryHealthOverride = '',
+}) {
   if (!certificate) return null;
-  const batteryHealthDisplay = getLatestStep13BatteryHealth(stepResults);
+  const derivedBatteryHealth = getLatestStep13BatteryHealth(stepResults);
+  const batteryHealthDisplay = batteryHealthOverride?.trim() || derivedBatteryHealth;
   
   // Filter step results that have notes and enrich with step titles
   const stepNotesWithContent = stepResults
@@ -213,7 +219,7 @@ export default function CertificatePreview({ certificate, stepResults = [], step
   );
 }
 
-function getLatestStep13BatteryHealth(stepResults = []) {
+export function getLatestStep13BatteryHealth(stepResults = []) {
   const step13Results = stepResults
     .filter((result) => Number(result?.step_number) === 13)
     .sort((a, b) => {
