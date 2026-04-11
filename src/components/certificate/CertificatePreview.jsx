@@ -6,10 +6,11 @@ export default function CertificatePreview({
   certificate,
   stepResults = [],
   steps = [],
+  batteryHealthOverride = '',
 }) {
   if (!certificate) return null;
   const derivedBatteryHealth = getLatestStep13BatteryHealth(stepResults);
-  const batteryHealthDisplay = certificate.battery_health_percentage?.trim() || derivedBatteryHealth;
+  const batteryHealthDisplay = batteryHealthOverride?.trim() || certificate.battery_health_percentage?.trim() || derivedBatteryHealth;
   
   // Filter step results that have notes and enrich with step titles
   const stepNotesWithContent = stepResults

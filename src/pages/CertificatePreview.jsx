@@ -5,7 +5,7 @@ import { base44 } from '@/api/base44Client';
 import { getHashQueryParams } from '@/lib/hashParams';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Loader2, Printer, Pencil, Trash2 } from 'lucide-react';
-import CertificatePreviewComponent from '@/components/certificate/CertificatePreview';
+import CertificatePreviewComponent, { getLatestStep13BatteryHealth } from '@/components/certificate/CertificatePreview';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,6 +25,7 @@ export default function CertificatePreviewPage() {
   const [certificate, setCertificate] = useState(null);
   const [stepResults, setStepResults] = useState([]);
   const [templateSteps, setTemplateSteps] = useState([]);
+  const [batteryHealthOverride, setBatteryHealthOverride] = useState('');
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deletePassword, setDeletePassword] = useState('');
   const [deleteError, setDeleteError] = useState('');
@@ -70,6 +71,7 @@ export default function CertificatePreviewPage() {
 
       const results = await base44.entities.RefurbStepResult.filter({ process_run_id: runId });
       setStepResults(results);
+      setBatteryHealthOverride(getLatestStep13BatteryHealth(results));
     }
     
     setLoading(false);
@@ -125,13 +127,25 @@ export default function CertificatePreviewPage() {
       {/* Header - Hidden on print */}
       <div className="bg-white border-b border-slate-200 sticky top-0 z-10 print:hidden">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-wrap">
             <Link to={createPageUrl('Certificates')}>
               <Button variant="ghost" size="icon" className="rounded-xl">
                 <ArrowLeft className="w-5 h-5" />
               </Button>
             </Link>
             <h1 className="text-lg font-bold text-slate-900">Certificate Preview</h1>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="battery-health-override" className="text-sm text-slate-600 whitespace-nowrap">
+                Battery Health
+              </Label>
+              <Input
+                id="battery-health-override"
+                value={batteryHealthOverride}
+                onChange={(e) => setBatteryHealthOverride(e.target.value)}
+                placeholder="e.g. 85%"
+                className="w-28 h-9"
+              />
+            </div>
           </div>
           <div className="flex gap-2">
             <Link to={createPageUrl(`CertificateForm?certId=${certId}`)}>
@@ -162,6 +176,7 @@ export default function CertificatePreviewPage() {
             certificate={certificate}
             stepResults={stepResults}
             steps={templateSteps}
+            batteryHealthOverride={batteryHealthOverride}
           />
         </div>
       </div>
