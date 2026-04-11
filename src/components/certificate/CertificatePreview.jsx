@@ -6,15 +6,14 @@ export default function CertificatePreview({
   certificate,
   stepResults = [],
   steps = [],
-  batteryHealthOverride = '',
 }) {
   if (!certificate) return null;
   const derivedBatteryHealth = getLatestStep13BatteryHealth(stepResults);
-  const batteryHealthDisplay = batteryHealthOverride?.trim() || derivedBatteryHealth;
+  const batteryHealthDisplay = certificate.battery_health_percentage?.trim() || derivedBatteryHealth;
   
   // Filter step results that have notes and enrich with step titles
   const stepNotesWithContent = stepResults
-    .filter((r) => r.notes && r.notes.trim())
+    .filter((r) => r.notes && r.notes.trim() && Number(r?.step_number) !== 13)
     .map((result) => {
       const matchingStep = steps.find((s) => s.step_number === result.step_number);
       return {
@@ -121,8 +120,8 @@ export default function CertificatePreview({
           )}
           {batteryHealthDisplay && (
             <div>
-              <span className="font-semibold text-slate-700">Battery Report Results:</span>
-              <div className="text-slate-900 whitespace-pre-wrap mt-1">Battery Health: {batteryHealthDisplay}</div>
+              <span className="font-semibold text-slate-700">Battery Health:</span>{' '}
+              <span className="text-slate-900">{batteryHealthDisplay}</span>
             </div>
           )}
         </div>
@@ -141,7 +140,9 @@ export default function CertificatePreview({
       {/* Tests and Software Confirmation */}
       <div className="mb-6 print:mb-2">
         <div className="text-sm space-y-0.5 text-slate-900">
-          {certificate.tests_performed?.map((test, idx) => (
+          {(certificate.tests_performed || [])
+            .filter((test) => test !== 'Battery health checked')
+            .map((test, idx) => (
             <div key={idx}>• {test}</div>
           ))}
           {certificate.tests_other && <div>• {certificate.tests_other}</div>}

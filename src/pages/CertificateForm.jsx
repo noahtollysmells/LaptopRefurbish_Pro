@@ -6,6 +6,7 @@ import { getHashQueryParams } from '@/lib/hashParams';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Loader2, Eye, Save } from 'lucide-react';
 import CertificateFormComponent from '@/components/certificate/CertificateForm';
+import { getLatestStep13BatteryHealth } from '@/components/certificate/CertificatePreview';
 import { toast } from 'sonner';
 
 export default function CertificateFormPage() {
@@ -40,7 +41,18 @@ export default function CertificateFormPage() {
   const loadCertificate = async () => {
     setLoading(true);
     const certificates = await base44.entities.RefurbCertificate.filter({ id: certId });
-    setCertificate(certificates[0]);
+    const cert = certificates[0] || {};
+
+    if (!cert.battery_health_percentage) {
+      const processRuns = await base44.entities.RefurbProcessRun.filter({ certificate_id: certId });
+      if (processRuns.length > 0) {
+        const runId = processRuns[0].id;
+        const results = await base44.entities.RefurbStepResult.filter({ process_run_id: runId });
+        cert.battery_health_percentage = getLatestStep13BatteryHealth(results);
+      }
+    }
+
+    setCertificate(cert);
     setLoading(false);
   };
 

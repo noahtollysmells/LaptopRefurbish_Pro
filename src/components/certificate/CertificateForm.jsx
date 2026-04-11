@@ -194,6 +194,16 @@ export default function CertificateForm({ data, onChange }) {
             rows={3}
           />
         </div>
+
+        <div>
+          <Label htmlFor="battery_health_percentage">Battery Health Percentage</Label>
+          <Input
+            id="battery_health_percentage"
+            value={data.battery_health_percentage || ''}
+            onChange={(e) => handleChange('battery_health_percentage', e.target.value)}
+            placeholder="e.g. 85%"
+          />
+        </div>
         
         <div>
           <Label htmlFor="condition_testing_notes">Condition & Testing Notes</Label>
